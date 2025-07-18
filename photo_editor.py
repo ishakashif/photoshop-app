@@ -26,6 +26,8 @@ def edit_image(image, brightness, watermark_text, watermark_color, selected_filt
         edit = edit.filter(ImageFilter.CONTOUR)
     if "Emboss" in selected_filters:
         edit = edit.filter(ImageFilter.EMBOSS)
+    if "Edge Enhance in selected_filters:
+        edit = edit.filter(ImageFilter.EDGE_ENHANCE)
 
 
 
