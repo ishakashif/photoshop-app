@@ -21,8 +21,11 @@ def edit_image(image, brightness, watermark_text, watermark_color, selected_filt
     if "Blur" in selected_filters: 
         edit = edit.filter(ImageFilter.BLUR)
     if "Grayscale" in selected_filters:
-        edit = edit.convert('L').convert("RGB") # RGB maintainence for watermarking
-        
+        edit = edit.convert('L').convert("RGB") # RGB maintainence for watermarking (it won't change color otherwise!)
+    if "Contour" in selected_filters:
+        edit = edit.filter(ImageFilter.CONTOUR)
+
+
 
 
     # drawing the watermark 
