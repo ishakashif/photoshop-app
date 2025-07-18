@@ -26,7 +26,7 @@ def edit_image(image, brightness, watermark_text, watermark_color, selected_filt
         edit = edit.filter(ImageFilter.CONTOUR)
     if "Emboss" in selected_filters:
         edit = edit.filter(ImageFilter.EMBOSS)
-    if "Edge Enhance in selected_filters:
+    if "Edge Enhance" in selected_filters:
         edit = edit.filter(ImageFilter.EDGE_ENHANCE)
 
     #applying brightness
@@ -41,32 +41,25 @@ def edit_image(image, brightness, watermark_text, watermark_color, selected_filt
 
     return edit
 
-
-
-
-
-
-    # drawing the watermark 
-    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
-    draw = ImageDraw.Draw(edit)
-    draw.text((10, 10), watermark_text, font=font, fill= rgba_to_rgb_tuple(watermark_color))
-
-    return edit
-
-
 # Gradio UI
-iface = gr.Interface (
+iface = gr.Interface(
     fn=edit_image,
     inputs=[
         gr.Image(type="pil", label="Upload your Image"),
         gr.Slider(0.5, 2.0, value=1.2, label="Brightness"),
         gr.Textbox("Isha", label="Watermark Text"),
-        gr.ColorPicker(value="red", label="Watermark Color")
+        gr.ColorPicker(value="red", label="Watermark Color"),
+        gr.CheckboxGroup(
+            choices=["Sharpen", "Blur", "Grayscale", "Contour", "Emboss", "Edge Enhance"],
+            label="Choose Filters to Apply",
+            value=["Sharpen"]
+        )
+
     ],
     outputs=gr.Image(type="pil", label="Edited Image"),
-    title="Isha's Stylish Photo Editor",
-    description="Enhance your photos and brand them with style!"
+    title="📸 Isha's Stylish Photo Editor",
+    description="Upload your image, customize filters and watermark, and watch your photo transform!"
 )
 
-iface.launch() 
 
+iface.launch()
