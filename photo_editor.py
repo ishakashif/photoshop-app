@@ -1,21 +1,6 @@
 import gradio as gr
 from PIL import Image, ImageEnhance, ImageFilter, ImageDraw, ImageFont
-import os
 
-
-def edit_image(image, brightness, watermark_text, watermark_color):
-    # applying the filters
-    edit = image.filter(ImageFilter.SHARPEN).convert('RGB')
-    enhancer = ImageEnhance.Brightness(edit)
-    edit = enhancer.enhance(brightness)
-
-
-    # drawing the watermark 
-    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
-    draw = ImageDraw.Draw(edit)
-    draw.text((10, 10), watermark_text, font=font, fill= rgba_to_rgb_tuple(watermark_color))
-
-    return edit
 
 # Convert a color string from Gradio into a format compatible with Pillow.
 # If the color is in "rgba(r, g, b, a)" format, convert it to an (R, G, B) tuple.
@@ -27,6 +12,20 @@ def rgba_to_rgb_tuple(color_string):
         return (int(r), int(g), int(b))
     else:
         return color_string  
+
+def edit_image(image, brightness, watermark_text, watermark_color, selected_filters):
+    edit = image.convert('RGB')
+    # Applying selected filters
+    if "Sharpen" in selected_filters:
+        edit = edit.filter(ImageFilter.SHARPEN)
+
+
+    # drawing the watermark 
+    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
+    draw = ImageDraw.Draw(edit)
+    draw.text((10, 10), watermark_text, font=font, fill= rgba_to_rgb_tuple(watermark_color))
+
+    return edit
 
 
 # Gradio UI
