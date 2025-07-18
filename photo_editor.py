@@ -34,7 +34,14 @@ def edit_image(image, brightness, watermark_text, watermark_color, selected_filt
     enhancer = ImageEnhance.Brightness(edit)
     edit = enhancer.enhance(brightness)
 
-    
+    #draw watermark
+    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
+    draw = ImageDraw.Draw(edit)
+    draw.text((10, 10), watermark_text, font=font, fill=rgba_to_rgb_tuple(watermark_color))
+
+    return edit
+
+
 
 
 
