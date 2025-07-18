@@ -1,21 +1,47 @@
+import gradio as gr
 from PIL import Image, ImageEnhance, ImageFilter, ImageDraw, ImageFont
 import os
 
-path = './unedited_images'
-pathOut = './edited_images'
 
-
-for filename in os.listdir(path):
-    img = Image.open(f"{path}/{filename}")
-    edit = img.filter(ImageFilter.SHARPEN).convert('RGB')
+def edit_image(image, brightness, watermark_text, watermark_color):
+    # applying the filters
+    edit = image.filter(ImageFilter.SHARPEN).convert('RGB')
     enhancer = ImageEnhance.Brightness(edit)
-    edit = enhancer.enhance(1.2)
+    edit = enhancer.enhance(brightness)
+
+
+    # drawing the watermark 
     font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
     draw = ImageDraw.Draw(edit)
-    draw.text((10, 10), "Isha", font=font, fill="red")
-    
+    draw.text((10, 10), watermark_text, font=font, fill= rgba_to_rgb_tuple(watermark_color))
 
-    clean_name = os.path.splitext(filename)[0]
-    edit.save(f'{pathOut}/{clean_name}_edited.jpg')
+    return edit
 
+# Convert a color string from Gradio into a format compatible with Pillow.
+# If the color is in "rgba(r, g, b, a)" format, convert it to an (R, G, B) tuple.
+# If it's a named color like "red" or a hex code like "#ff0000", return it as-is.
+def rgba_to_rgb_tuple(color_string):
+    if color_string.startswith("rgba"):
+        color_string = color_string.replace("rgba(", "").replace(")", "")
+        r, g, b, a = map(float, color_string.split(","))
+        return (int(r), int(g), int(b))
+    else:
+        return color_string  
+
+
+# Gradio UI
+iface = gr.Interface (
+    fn=edit_image,
+    inputs=[
+        gr.Image(type="pil", label="Upload your Image"),
+        gr.Slider(0.5, 2.0, value=1.2, label="Brightness"),
+        gr.Textbox("Isha", label="Watermark Text"),
+        gr.ColorPicker(value="red", label="Watermark Color")
+    ],
+    outputs=gr.Image(type="pil", label="Edited Image"),
+    title="Isha's Stylish Photo Editor",
+    description="Enhance your photos and brand them with style!"
+)
+
+iface.launch() 
 
