@@ -29,6 +29,13 @@ def edit_image(image, brightness, watermark_text, watermark_color, selected_filt
     if "Edge Enhance in selected_filters:
         edit = edit.filter(ImageFilter.EDGE_ENHANCE)
 
+    #applying brightness
+
+    enhancer = ImageEnhance.Brightness(edit)
+    edit = enhancer.enhance(brightness)
+
+    
+
 
 
 
