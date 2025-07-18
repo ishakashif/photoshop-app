@@ -18,6 +18,10 @@ def edit_image(image, brightness, watermark_text, watermark_color, selected_filt
     # Applying selected filters
     if "Sharpen" in selected_filters:
         edit = edit.filter(ImageFilter.SHARPEN)
+    if "Blur" in selected_filters: 
+        edit = edit.filter(ImageFilter.BLUR)
+    if "Grayscale" in selected_filters:
+        edit = edit.convert('L').convert
 
 
     # drawing the watermark 
