@@ -54,7 +54,12 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
     edit = enhancer.enhance(brightness)
 
     #draw watermark
-    text_size = font.getsize(watermark_text)
+    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
+    draw = ImageDraw.Draw(edit)
+    bbox = draw.textbbox((0, 0), watermark_text, font=font)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+    text_size = (text_width, text_height)
     pos = get_position(edit.size, text_size, watermark_position)
     draw.text(pos, watermark_text, font=font, fill=rgba_to_rgb_tuple(watermark_color))
 
@@ -73,7 +78,7 @@ iface = gr.Interface(
             choices=["Top-Left", "Top-Right", "Bottom-Left", "Bottom-Right", "Center"],
             value="Top-Left",
             label="Watermark Position"
-        )
+        ),
 
         gr.CheckboxGroup(
             choices=["Sharpen", "Blur", "Grayscale", "Contour", "Emboss", "Edge Enhance"],
