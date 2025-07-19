@@ -49,6 +49,12 @@ iface = gr.Interface(
         gr.Slider(0.5, 2.0, value=1.2, label="Brightness"),
         gr.Textbox("Isha", label="Watermark Text"),
         gr.ColorPicker(value="red", label="Watermark Color"),
+        gr.Dropdown(
+            choices=["Top-Left", "Top-Right", "Bottom-Left", "Bottom-Right", "Center"],
+            value="Top-Left",
+            label="Watermark Position"
+        )
+
         gr.CheckboxGroup(
             choices=["Sharpen", "Blur", "Grayscale", "Contour", "Emboss", "Edge Enhance"],
             label="Choose Filters to Apply",
