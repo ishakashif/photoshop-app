@@ -23,6 +23,8 @@ def get_position(image_size, text_size, position):
         return (10, 10)
     elif position == "Top-Right":
         return (W - w - 10, 10)
+    elif position == "Top-Center":
+        return ((W - w) // 2, 10)
     elif position == "Bottom-Left":
         return (10, H - h - 10)
     elif position == "Bottom-Right":
@@ -32,7 +34,7 @@ def get_position(image_size, text_size, position):
 
 
 
-def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset):
+def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset, font_size):
     edit = image.convert('RGB')
     # Applying selected filters
     if "Sharpen" in selected_filters:
@@ -72,7 +74,7 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
         edit = Image.merge("RGB", (r, g, b))
 
     #draw watermark
-    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
+    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", int(font_size))
     draw = ImageDraw.Draw(edit)
     bbox = draw.textbbox((0, 0), watermark_text, font=font)
     text_width = bbox[2] - bbox[0]
@@ -93,7 +95,7 @@ iface = gr.Interface(
         gr.Textbox("Isha", label="Watermark Text"),
         gr.ColorPicker(value="red", label="Watermark Color"),
         gr.Dropdown(
-            choices=["Top-Left", "Top-Right", "Bottom-Left", "Bottom-Right", "Center"],
+            choices=["Top-Left", "Top-Right", "Top-Center", "Bottom-Left", "Bottom-Right", "Center"],
             value="Top-Left",
             label="Watermark Position"
         ),
@@ -106,9 +108,9 @@ iface = gr.Interface(
 
         gr.Dropdown(
             choices=["None", "Vintage", "Dreamy", "Drama", "Cool Tones"],
-            value="None",
             label="Filter Preset (Pre-Styled)"
-        )
+        ),
+        gr.Slider(10, 150, value=70, step=1, label="Watermark Font Size"),
 
     ],
     outputs=gr.Image(type="pil", label="Edited Image"),
