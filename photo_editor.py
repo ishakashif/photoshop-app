@@ -34,9 +34,16 @@ def get_position(image_size, text_size, position):
     elif position == "Center":
         return ((W - w) // 2, (H - h) // 2)
 
+# Fonts to select from for users' Watermark option!
+font_paths = {
+    "Arial": "/Library/Fonts/Arial.ttf",
+    "Times New Roman": "/Library/Fonts/Times New Roman.ttf",
+    "Courier New": "/Library/Fonts/Courier New.ttf",
+    "Georgia": "/Library/Fonts/Georgia.ttf",
+    "Verdana": "/Library/Fonts/Verdana.ttf"
+}
 
-
-def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset, font_size):
+def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset, font_size, font_style):
     edit = image.convert('RGB')
     # Applying selected filters
     if "Sharpen" in selected_filters:
@@ -76,7 +83,8 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
         edit = Image.merge("RGB", (r, g, b))
 
     #draw watermark
-    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", int(font_size))
+    font_path = font_paths.get(font_style, "/Library/Fonts/Arial.ttf")
+    font = ImageFont.truetype(font_path, int(font_size))
     draw = ImageDraw.Draw(edit)
     bbox = draw.textbbox((0, 0), watermark_text, font=font)
     text_width = bbox[2] - bbox[0]
@@ -112,7 +120,15 @@ iface = gr.Interface(
             choices=["None", "Vintage", "Dreamy", "Drama", "Cool Tones"],
             label="Filter Preset (Pre-Styled)"
         ),
+
         gr.Slider(10, 150, value=70, step=1, label="Watermark Font Size"),
+
+        gr.Dropdown(
+            choices=["Arial", "Times New Roman", "Courier New", "Georgia", "Verdana"],
+            value="Arial",
+            label="Watermark Font Style"
+        )
+
 
     ],
     outputs=gr.Image(type="pil", label="Edited Image"),
