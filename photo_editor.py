@@ -28,7 +28,9 @@ def get_position(image_size, text_size, position):
     elif position == "Bottom-Left":
         return (10, H - h - 10)
     elif position == "Bottom-Right":
-        return (W - w - 10, H - h - 10)
+        return (W - w - 10, H - h - 20)
+    elif position == "Bottom-Center":
+        return ((W - w) // 2, H - h - 20)
     elif position == "Center":
         return ((W - w) // 2, (H - h) // 2)
 
@@ -95,7 +97,7 @@ iface = gr.Interface(
         gr.Textbox("Isha", label="Watermark Text"),
         gr.ColorPicker(value="red", label="Watermark Color"),
         gr.Dropdown(
-            choices=["Top-Left", "Top-Right", "Top-Center", "Bottom-Left", "Bottom-Right", "Center"],
+            choices=["Top-Left", "Top-Right", "Top-Center", "Bottom-Left", "Bottom-Right", "Bottom-Center", "Center"],
             value="Top-Left",
             label="Watermark Position"
         ),
