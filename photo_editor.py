@@ -43,7 +43,7 @@ font_paths = {
     "Verdana": "/Library/Fonts/Verdana.ttf"
 }
 
-def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset, font_size, font_style):
+def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset, font_size, font_style, custom_font_file):
     edit = image.convert('RGB')
     # Applying selected filters
     if "Sharpen" in selected_filters:
@@ -83,7 +83,10 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
         edit = Image.merge("RGB", (r, g, b))
 
     #draw watermark
-    font_path = font_paths.get(font_style, "/Library/Fonts/Arial.ttf")
+    if custom_font_file is not None:
+        font_path = custom_font_file.name 
+    else:
+        font_path = font_paths.get(font_style, "/Library/Fonts/Arial.ttf")
     font = ImageFont.truetype(font_path, int(font_size))
     draw = ImageDraw.Draw(edit)
     bbox = draw.textbbox((0, 0), watermark_text, font=font)
@@ -128,6 +131,8 @@ iface = gr.Interface(
             value="Arial",
             label="Watermark Font Style"
         )
+
+        gr.File(label="Upload Your Own .ttf Font (Optional)", type ="file")
 
 
     ],
