@@ -83,11 +83,18 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
         edit = Image.merge("RGB", (r, g, b))
 
     #draw watermark
-    if custom_font_file is not None:
-        font_path = custom_font_file.name 
-    else:
-        font_path = font_paths.get(font_style, "/Library/Fonts/Arial.ttf")
-    font = ImageFont.truetype(font_path, int(font_size))
+    try:
+        if custom_font_file is not None:
+            font_path = custom_font_file.name 
+        else:
+            font_path = font_paths.get(font_style, "/Library/Fonts/Arial.ttf")
+        font = ImageFont.truetype(font_path, int(font_size))
+    except Exception as e:
+        print(f"⚠️ Error loading font: {e}. Falling back to Arial.")
+        font = ImageFont.truetype("/Library/Fonts/Arial.ttf", int(font_size))
+
+
+    # end of font handling
     draw = ImageDraw.Draw(edit)
     bbox = draw.textbbox((0, 0), watermark_text, font=font)
     text_width = bbox[2] - bbox[0]
@@ -130,9 +137,9 @@ iface = gr.Interface(
             choices=["Arial", "Times New Roman", "Courier New", "Georgia", "Verdana"],
             value="Arial",
             label="Watermark Font Style"
-        )
+        ),
 
-        gr.File(label="Upload Your Own .ttf Font (Optional)", type ="file")
+        gr.File(label="Upload Your Own .ttf Font (Optional)", type ="filepath")
 
 
     ],
