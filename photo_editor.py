@@ -54,11 +54,11 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
     edit = enhancer.enhance(brightness)
 
     # defining presets
-    if preset === "Vintage":
+    if preset == "Vintage":
         edit = ImageEnhance.Color(edit).enhance(0.7)
         edit = ImageEnhance.Contrast(edit).enhance(1.2)
         edit = edit.filter(ImageFilter.GaussianBlur(1))
-    elif preset === "Dreamy":
+    elif preset == "Dreamy":
         edit = ImageEnhance.Brightness(edit).enhance(1.3)
         edit = ImageEnhance.Sharpness(edit).enhance(0.7)
         edit = edit.filter(ImageFilter.BLUR)
@@ -66,6 +66,10 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
         edit = ImageEnhance.Contrast(edit).enhance(1.5)
         edit = ImageEnhance.Sharpness(edit).enhance(2.0)
         edit = edit.filter(ImageFilter.EDGE_ENHANCE)
+    elif preset == "Cool Tones":
+        r, g, b = edit.split()
+        b = ImageEnhance.Brightness(b).enhance(1.3)
+        edit = Image.merge("RGB", (r, g, b))
 
     #draw watermark
     font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
