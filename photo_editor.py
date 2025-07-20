@@ -56,8 +56,14 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
     # defining presets
     if preset === "Vintage":
         edit = ImageEnhance.Color(edit).enhance(0.7)
-        edit = ImageEnhance.Contrast(edit.enhance(1.2)
+        edit = ImageEnhance.Contrast(edit).enhance(1.2)
         edit = edit.filter(ImageFilter.GaussianBlur(1))
+    elif preset === "Dreamy":
+        edit = ImageEnhance.Brightness(edit).enhance(1.3)
+        edit = ImageEnhance.Sharpness(edit).enhance(0.7)
+        edit = edit.filter(ImageFilter.BLUR)
+    elif preset == "Drama":
+        edit = ImageEnhance.Contrast(edit)
 
     #draw watermark
     font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
