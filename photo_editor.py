@@ -32,7 +32,7 @@ def get_position(image_size, text_size, position):
 
 
 
-def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters):
+def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset):
     edit = image.convert('RGB')
     # Applying selected filters
     if "Sharpen" in selected_filters:
@@ -52,6 +52,12 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
 
     enhancer = ImageEnhance.Brightness(edit)
     edit = enhancer.enhance(brightness)
+
+    # defining presets
+    if preset === "Vintage":
+        edit = ImageEnhance.Color(edit).enhance(0.7)
+        edit = ImageEnhance.Contrast(edit.enhance(1.2)
+        edit = edit.filter(ImageFilter.GaussianBlur(1))
 
     #draw watermark
     font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
@@ -84,6 +90,12 @@ iface = gr.Interface(
             choices=["Sharpen", "Blur", "Grayscale", "Contour", "Emboss", "Edge Enhance"],
             label="Choose Filters to Apply",
             value=["Sharpen"]
+        ),
+
+        gr.Dropdown(
+            choices=["None", "Vintage", "Dreamy", "Drama", "Cool Tones"],
+            value="None",
+            label="Filter Preset (Pre-Styled)"
         )
 
     ],
