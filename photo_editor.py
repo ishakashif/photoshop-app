@@ -23,16 +23,27 @@ def get_position(image_size, text_size, position):
         return (10, 10)
     elif position == "Top-Right":
         return (W - w - 10, 10)
+    elif position == "Top-Center":
+        return ((W - w) // 2, 10)
     elif position == "Bottom-Left":
         return (10, H - h - 10)
     elif position == "Bottom-Right":
-        return (W - w - 10, H - h - 10)
+        return (W - w - 10, H - h - 20)
+    elif position == "Bottom-Center":
+        return ((W - w) // 2, H - h - 20)
     elif position == "Center":
         return ((W - w) // 2, (H - h) // 2)
 
+# Fonts to select from for users' Watermark option!
+font_paths = {
+    "Arial": "/Library/Fonts/Arial.ttf",
+    "Times New Roman": "/Library/Fonts/Times New Roman.ttf",
+    "Courier New": "/Library/Fonts/Courier New.ttf",
+    "Georgia": "/Library/Fonts/Georgia.ttf",
+    "Verdana": "/Library/Fonts/Verdana.ttf"
+}
 
-
-def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters):
+def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset, font_size, font_style, custom_font_file):
     edit = image.convert('RGB')
     # Applying selected filters
     if "Sharpen" in selected_filters:
@@ -53,8 +64,37 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
     enhancer = ImageEnhance.Brightness(edit)
     edit = enhancer.enhance(brightness)
 
+    # defining presets
+    if preset == "Vintage":
+        edit = ImageEnhance.Color(edit).enhance(0.7)
+        edit = ImageEnhance.Contrast(edit).enhance(1.2)
+        edit = edit.filter(ImageFilter.GaussianBlur(1))
+    elif preset == "Dreamy":
+        edit = ImageEnhance.Brightness(edit).enhance(1.3)
+        edit = ImageEnhance.Sharpness(edit).enhance(0.7)
+        edit = edit.filter(ImageFilter.BLUR)
+    elif preset == "Drama":
+        edit = ImageEnhance.Contrast(edit).enhance(1.5)
+        edit = ImageEnhance.Sharpness(edit).enhance(2.0)
+        edit = edit.filter(ImageFilter.EDGE_ENHANCE)
+    elif preset == "Cool Tones":
+        r, g, b = edit.split()
+        b = ImageEnhance.Brightness(b).enhance(1.3)
+        edit = Image.merge("RGB", (r, g, b))
+
     #draw watermark
-    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
+    try:
+        if custom_font_file is not None:
+            font_path = custom_font_file.name 
+        else:
+            font_path = font_paths.get(font_style, "/Library/Fonts/Arial.ttf")
+        font = ImageFont.truetype(font_path, int(font_size))
+    except Exception as e:
+        print(f"⚠️ Error loading font: {e}. Falling back to Arial.")
+        font = ImageFont.truetype("/Library/Fonts/Arial.ttf", int(font_size))
+
+
+    # end of font handling
     draw = ImageDraw.Draw(edit)
     bbox = draw.textbbox((0, 0), watermark_text, font=font)
     text_width = bbox[2] - bbox[0]
@@ -75,7 +115,7 @@ iface = gr.Interface(
         gr.Textbox("Isha", label="Watermark Text"),
         gr.ColorPicker(value="red", label="Watermark Color"),
         gr.Dropdown(
-            choices=["Top-Left", "Top-Right", "Bottom-Left", "Bottom-Right", "Center"],
+            choices=["Top-Left", "Top-Right", "Top-Center", "Bottom-Left", "Bottom-Right", "Bottom-Center", "Center"],
             value="Top-Left",
             label="Watermark Position"
         ),
@@ -84,7 +124,23 @@ iface = gr.Interface(
             choices=["Sharpen", "Blur", "Grayscale", "Contour", "Emboss", "Edge Enhance"],
             label="Choose Filters to Apply",
             value=["Sharpen"]
-        )
+        ),
+
+        gr.Dropdown(
+            choices=["None", "Vintage", "Dreamy", "Drama", "Cool Tones"],
+            label="Filter Preset (Pre-Styled)"
+        ),
+
+        gr.Slider(10, 150, value=70, step=1, label="Watermark Font Size"),
+
+        gr.Dropdown(
+            choices=["Arial", "Times New Roman", "Courier New", "Georgia", "Verdana"],
+            value="Arial",
+            label="Watermark Font Style"
+        ),
+
+        gr.File(label="Upload Your Own .ttf Font (Optional)", type ="filepath")
+
 
     ],
     outputs=gr.Image(type="pil", label="Edited Image"),
