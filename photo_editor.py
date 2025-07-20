@@ -63,7 +63,9 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
         edit = ImageEnhance.Sharpness(edit).enhance(0.7)
         edit = edit.filter(ImageFilter.BLUR)
     elif preset == "Drama":
-        edit = ImageEnhance.Contrast(edit)
+        edit = ImageEnhance.Contrast(edit).enhance(1.5)
+        edit = ImageEnhance.Sharpness(edit).enhance(2.0)
+        edit = edit.filter(ImageFilter.EDGE_ENHANCE)
 
     #draw watermark
     font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 70)
