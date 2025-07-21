@@ -105,17 +105,16 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
 
     # handling cropping
     if crop_enabled:
-        width, height = edit.size
-        left = int(crop_left)
-        top = int(crop_top)
-        right = int(crop_right)
-        bottom = int(crop_bottom)
-    # ensuring valid crop box
-        left = max(0, min(left, width - 1))
-        top = max(0, min(top, height -1))
-        right = max(left + 1, min(right, width))
-        bottom = max(top + 1, min (bottom, height))
-        edit = image.crop((left, top, right, bottom))
+        width, height = edit.size  
+
+        left = max(0, min(crop_left, width - 1))
+        top = max(0, min(crop_top, height - 1))
+        right = max(left + 1, min(crop_right, width))
+        bottom = max(top + 1, min(crop_bottom, height))
+
+        # Only crop if the box is different from full image
+        if (left != 0 or top != 0 or right != width or bottom != height):
+            edit = edit.crop((left, top, right, bottom))
     return edit
 
 # Gradio UI
