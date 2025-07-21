@@ -43,7 +43,7 @@ font_paths = {
     "Verdana": "/Library/Fonts/Verdana.ttf"
 }
 
-def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset, font_size, font_style, custom_font_file):
+def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset, font_size, font_style, custom_font_file, crop_enabled, crop_left, crop_top, crop_right, crop_bottom):
     edit = image.convert('RGB')
     # Applying selected filters
     if "Sharpen" in selected_filters:
@@ -103,7 +103,19 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
     pos = get_position(edit.size, text_size, watermark_position)
     draw.text(pos, watermark_text, font=font, fill=rgba_to_rgb_tuple(watermark_color))
 
-
+    # handling cropping
+    if crop_enabled:
+        width, height = image.size
+        left = int(crop_left)
+        top = int(crop_top)
+        right = int(crop_right)
+        bottom = int(crop_bottom)
+    # ensuring valid crop box
+        left = max(0, min(left, width - 1))
+        top = max(0, min(top, height -1))
+        right = max(left + 1, min(right, width))
+        bottom = max(top + 1, min (bottom, height))
+        edit = image.crop((left, top, right, bottom))
     return edit
 
 # Gradio UI
@@ -139,9 +151,13 @@ iface = gr.Interface(
             label="Watermark Font Style"
         ),
 
-        gr.File(label="Upload Your Own .ttf Font (Optional)", type ="filepath")
+        gr.File(label="Upload Your Own .ttf Font (Optional)", type ="filepath"),
 
-
+        gr.Checkbox(label="Enable Cropping", value=False),
+        gr.Slider(0, 1000, value=0, step=1, label="Crop Left"),
+        gr.Slider(0, 1000, value=0, step=1, label="Crop Top"),
+        gr.Slider(0, 1000, value=0, step=1, label="Crop Right"),
+        gr.Slider(0, 1000, value=0, step=1, label="Crop Bottom")
     ],
     outputs=gr.Image(type="pil", label="Edited Image"),
     title="📸 Isha's Stylish Photo Editor",
