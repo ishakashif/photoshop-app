@@ -105,7 +105,7 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
 
     # handling cropping
     if crop_enabled:
-        width, height = image.size
+        width, height = edit.size
         left = int(crop_left)
         top = int(crop_top)
         right = int(crop_right)
