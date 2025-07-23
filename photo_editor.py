@@ -12,7 +12,7 @@ def rgba_to_rgb_tuple(color_string):
         return (int(r), int(g), int(b))
     else:
         return color_string  
-
+# hi 
 # Finding the position of the Watermark to allow users to be able to move it where
 # they would like!
 def get_position(image_size, text_size, position):
