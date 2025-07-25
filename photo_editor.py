@@ -52,18 +52,18 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
         width, height = edit.size  
 
     # Use full width/height if right/bottom not set
-    if crop_right == 0:
-        crop_right = width
-    if crop_bottom == 0:
-        crop_bottom = height
+        if crop_right == 0:
+            crop_right = width
+        if crop_bottom == 0:
+            crop_bottom = height
 
-    left = max(0, min(crop_left, width - 1))
-    top = max(0, min(crop_top, height - 1))
-    right = max(left + 1, min(crop_right, width))
-    bottom = max(top + 1, min(crop_bottom, height))
+        left = max(0, min(crop_left, width - 1))
+        top = max(0, min(crop_top, height - 1))
+        right = max(left + 1, min(crop_right, width))
+        bottom = max(top + 1, min(crop_bottom, height))
 
-    if (left != 0 or top != 0 or right != width or bottom != height):
-        edit = edit.crop((left, top, right, bottom))
+        if (left != 0 or top != 0 or right != width or bottom != height):
+            edit = edit.crop((left, top, right, bottom))
     
 
     # Applying selected filters
