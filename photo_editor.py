@@ -49,7 +49,7 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
 
     # Handle Cropping 
     if crop_enabled:
-    width, height = edit.size  
+        width, height = edit.size  
 
     # Use full width/height if right/bottom not set
     if crop_right == 0:
