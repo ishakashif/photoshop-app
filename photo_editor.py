@@ -44,7 +44,28 @@ font_paths = {
 }
 
 def edit_image(image, brightness, watermark_text, watermark_color, watermark_position, selected_filters, preset, font_size, font_style, custom_font_file, crop_enabled, crop_left, crop_top, crop_right, crop_bottom):
+    # Convert to RGB
     edit = image.convert('RGB')
+
+    # Handle Cropping 
+    if crop_enabled:
+    width, height = edit.size  
+
+    # Use full width/height if right/bottom not set
+    if crop_right == 0:
+        crop_right = width
+    if crop_bottom == 0:
+        crop_bottom = height
+
+    left = max(0, min(crop_left, width - 1))
+    top = max(0, min(crop_top, height - 1))
+    right = max(left + 1, min(crop_right, width))
+    bottom = max(top + 1, min(crop_bottom, height))
+
+    if (left != 0 or top != 0 or right != width or bottom != height):
+        edit = edit.crop((left, top, right, bottom))
+    
+
     # Applying selected filters
     if "Sharpen" in selected_filters:
         edit = edit.filter(ImageFilter.SHARPEN)
@@ -103,19 +124,8 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
     pos = get_position(edit.size, text_size, watermark_position)
     draw.text(pos, watermark_text, font=font, fill=rgba_to_rgb_tuple(watermark_color))
 
-    # handling cropping
-    if crop_enabled:
-        width, height = edit.size  
-
-        left = max(0, min(crop_left, width - 1))
-        top = max(0, min(crop_top, height - 1))
-        right = max(left + 1, min(crop_right, width))
-        bottom = max(top + 1, min(crop_bottom, height))
-
-        # Only crop if the box is different from full image
-        if (left != 0 or top != 0 or right != width or bottom != height):
-            edit = edit.crop((left, top, right, bottom))
     return edit
+
 
 # Gradio UI
 iface = gr.Interface(
