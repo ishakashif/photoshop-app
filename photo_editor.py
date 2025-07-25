@@ -51,16 +51,15 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
     if crop_enabled:
         width, height = edit.size  
 
-    # Use full width/height if right/bottom not set
-        if crop_right == 0:
-            crop_right = width
-        if crop_bottom == 0:
-            crop_bottom = height
+    # Interpret crop_right and crop_bottom as pixels to remove from right/bottom
+        left = max(0, crop_left)
+        top = max(0, crop_top)
+        right = max(left + 1, width - crop_right)
+        bottom = max(top + 1, height - crop_bottom)
 
-        left = max(0, min(crop_left, width - 1))
-        top = max(0, min(crop_top, height - 1))
-        right = max(left + 1, min(crop_right, width))
-        bottom = max(top + 1, min(crop_bottom, height))
+    # Ensure we don't go negative or invert the box
+        right = max(left + 1, min(right, width))
+        bottom = max(top + 1, min(bottom, height))
 
         if (left != 0 or top != 0 or right != width or bottom != height):
             edit = edit.crop((left, top, right, bottom))
@@ -152,7 +151,7 @@ iface = gr.Interface(
             label="Filter Preset (Pre-Styled)"
         ),
 
-        gr.Slider(10, 150, value=70, step=1, label="Watermark Font Size"),
+        gr.Slider(0, 150, value=70, step=1, label="Watermark Font Size"),
 
         gr.Dropdown(
             choices=["Arial", "Times New Roman", "Courier New", "Georgia", "Verdana"],
