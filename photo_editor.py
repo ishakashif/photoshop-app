@@ -163,10 +163,10 @@ iface = gr.Interface(
         gr.File(label="Upload Your Own .ttf Font (Optional)", type ="filepath"),
 
         gr.Checkbox(label="Enable Cropping", value=False),
-        gr.Slider(0, 1000, value=0, step=1, label="Crop Left"),
-        gr.Slider(0, 1000, value=0, step=1, label="Crop Top"),
-        gr.Slider(0, 1000, value=0, step=1, label="Crop Right"),
-        gr.Slider(0, 1000, value=0, step=1, label="Crop Bottom")
+        gr.Slider(0, 100, value=0, step=1, label="Crop Left"),
+        gr.Slider(0, 100, value=0, step=1, label="Crop Top"),
+        gr.Slider(0, 100, value=0, step=1, label="Crop Right"),
+        gr.Slider(0, 100, value=0, step=1, label="Crop Bottom")
     ],
     outputs=gr.Image(type="pil", label="Edited Image"),
     title="📸 Isha's Stylish Photo Editor",
