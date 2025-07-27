@@ -222,3 +222,4 @@ with gr.Blocks(title="📸 Isha's Stylish Photo Editor") as iface:
 
 iface.launch() 
 # massive difference in handling rendering
+# everything updates in live time, with only around 2-ish second wait periods
