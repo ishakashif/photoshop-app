@@ -220,4 +220,5 @@ with gr.Blocks(title="📸 Isha's Stylish Photo Editor") as iface:
         outputs=settings_to_reset
     )
 
-iface.launch()
+iface.launch() 
+# massive difference in handling rendering
