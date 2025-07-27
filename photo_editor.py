@@ -125,54 +125,99 @@ def edit_image(image, brightness, watermark_text, watermark_color, watermark_pos
 
     return edit
 
+# Function to reset all settings to default values
+def reset_all_settings():
+    return [
+        1.2,  # brightness
+        "Isha",  # watermark_text
+        "red",  # watermark_color
+        "Top-Left",  # watermark_position
+        ["Sharpen"],  # selected_filters
+        "None",  # preset
+        70,  # font_size
+        "Arial",  # font_style
+        None,  # custom_font_file
+        False,  # crop_enabled
+        0,  # crop_left
+        0,  # crop_top
+        0,  # crop_right
+        0   # crop_bottom
+    ]
 
-# Gradio UI
-iface = gr.Interface(
-    fn=edit_image,
-    inputs=[
-        gr.Image(type="pil", label="Upload your Image"),
-        gr.Slider(0.5, 2.0, value=1.2, label="Brightness"),
-        gr.Textbox("Isha", label="Watermark Text"),
-        gr.ColorPicker(value="red", label="Watermark Color"),
-        gr.Dropdown(
-            choices=["Top-Left", "Top-Right", "Top-Center", "Bottom-Left", "Bottom-Right", "Bottom-Center", "Center"],
-            value="Top-Left",
-            label="Watermark Position"
-        ),
+# Create Gradio interface with blocks for more control
+with gr.Blocks(title="📸 Isha's Stylish Photo Editor") as iface:
+    gr.Markdown("# 📸 Isha's Stylish Photo Editor")
+    gr.Markdown("Upload your image, customize filters and watermark, and watch your photo transform!")
+    
+    with gr.Row():
+        with gr.Column():
+            # Input components
+            image_input = gr.Image(type="pil", label="Upload your Image")
+            brightness_slider = gr.Slider(0.5, 2.0, value=1.2, label="Brightness")
+            watermark_text = gr.Textbox("Isha", label="Watermark Text")
+            watermark_color = gr.ColorPicker(value="red", label="Watermark Color")
+            watermark_position = gr.Dropdown(
+                choices=["Top-Left", "Top-Right", "Top-Center", "Bottom-Left", "Bottom-Right", "Bottom-Center", "Center"],
+                value="Top-Left",
+                label="Watermark Position"
+            )
+            selected_filters = gr.CheckboxGroup(
+                choices=["Sharpen", "Blur", "Grayscale", "Contour", "Emboss", "Edge Enhance"],
+                label="Choose Filters to Apply",
+                value=["Sharpen"]
+            )
+            preset = gr.Dropdown(
+                choices=["None", "Vintage", "Dreamy", "Drama", "Cool Tones"],
+                value="None",
+                label="Filter Preset (Pre-Styled)"
+            )
+            font_size = gr.Slider(0, 150, value=70, step=1, label="Watermark Font Size")
+            font_style = gr.Dropdown(
+                choices=["Arial", "Times New Roman", "Courier New", "Georgia", "Verdana"],
+                value="Arial",
+                label="Watermark Font Style"
+            )
+            custom_font_file = gr.File(label="Upload Your Own .ttf Font (Optional)", type="filepath")
+            crop_enabled = gr.Checkbox(label="Enable Cropping", value=False)
+            crop_left = gr.Slider(0, 100, value=0, step=1, label="Crop Left")
+            crop_top = gr.Slider(0, 100, value=0, step=1, label="Crop Top")
+            crop_right = gr.Slider(0, 100, value=0, step=1, label="Crop Right")
+            crop_bottom = gr.Slider(0, 100, value=0, step=1, label="Crop Bottom")
+            
+            # Reset button
+            reset_btn = gr.Button("🔄 Reset All Settings", variant="secondary")
+            
+        with gr.Column():
+            # Output
+            output_image = gr.Image(type="pil", label="Edited Image")
+    
+    # Collect all input components for easier handling
+    all_inputs = [
+        image_input, brightness_slider, watermark_text, watermark_color, 
+        watermark_position, selected_filters, preset, font_size, font_style, 
+        custom_font_file, crop_enabled, crop_left, crop_top, crop_right, crop_bottom
+    ]
+    
+    # Settings to reset (excluding the image input)
+    settings_to_reset = [
+        brightness_slider, watermark_text, watermark_color, watermark_position, 
+        selected_filters, preset, font_size, font_style, custom_font_file, 
+        crop_enabled, crop_left, crop_top, crop_right, crop_bottom
+    ]
+    
+    # Auto-update the output when any input changes
+    for input_component in all_inputs:
+        input_component.change(
+            fn=edit_image,
+            inputs=all_inputs,
+            outputs=output_image
+        )
+    
+    # Reset button functionality
+    reset_btn.click(
+        fn=reset_all_settings,
+        inputs=[],
+        outputs=settings_to_reset
+    )
 
-        gr.CheckboxGroup(
-            choices=["Sharpen", "Blur", "Grayscale", "Contour", "Emboss", "Edge Enhance"],
-            label="Choose Filters to Apply",
-            value=["Sharpen"]
-        ),
-
-        gr.Dropdown(
-            choices=["None", "Vintage", "Dreamy", "Drama", "Cool Tones"],
-            label="Filter Preset (Pre-Styled)"
-        ),
-
-        gr.Slider(0, 150, value=70, step=1, label="Watermark Font Size"),
-
-        gr.Dropdown(
-            choices=["Arial", "Times New Roman", "Courier New", "Georgia", "Verdana"],
-            value="Arial",
-            label="Watermark Font Style"
-        ),
-
-        gr.File(label="Upload Your Own .ttf Font (Optional)", type ="filepath"),
-
-        gr.Checkbox(label="Enable Cropping", value=False),
-        gr.Slider(0, 100, value=0, step=1, label="Crop Left"),
-        gr.Slider(0, 100, value=0, step=1, label="Crop Top"),
-        gr.Slider(0, 100, value=0, step=1, label="Crop Right"),
-        gr.Slider(0, 100, value=0, step=1, label="Crop Bottom")
-    ],
-    outputs=gr.Image(type="pil", label="Edited Image"),
-    title="📸 Isha's Stylish Photo Editor",
-    description="Upload your image, customize filters and watermark, and watch your photo transform!"
-)
-
-
-iface.launch()
-
-
+iface.launch(share=False, server_name="127.0.0.1", server_port=7860)
