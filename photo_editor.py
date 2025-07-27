@@ -221,5 +221,3 @@ with gr.Blocks(title="📸 Isha's Stylish Photo Editor") as iface:
     )
 
 iface.launch(share=False, server_name="127.0.0.1", server_port=7860)
-# massive difference in handling rendering
-# everything updates in live time, with only around 2-ish second wait periods
